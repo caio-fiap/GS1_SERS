@@ -62,20 +62,20 @@ def gauge(valor: float, minv: float, maxv: float, titulo: str, status: str) -> g
 
 #sidebar
 with st.sidebar:
-    st.markdown("##\U00002604 AETHER-1 Control")
+    st.markdown("## \U00002604 AETHER-1 Control")
     st.markdown("---")
 
     status_atual = st.session_state.estado["status_geral"]
     st.markdown(f"**Status:**{badge(status_atual)}", unsafe_allow_html=True)
-    st.markdown(f"**Ciclo:**{st.session_state.ciclo}")
-    st.markdown(f"**Alertas:**{len(st.session_state.alertas)}")
+    st.markdown(f"**Ciclo:** {st.session_state.ciclo}")
+    st.markdown(f"**Alertas:** {len(st.session_state.alertas)}")
     st.markdown("---")
 
     if st.button("\u25B6 Próximo ciclo", type="primary"):
         novo = gerar_ciclo(st.session_state.estado, st.session_state.modo_crise)
         st.session_state.estado = novo
         st.session_state.ciclo += 1
-        st.session_state.historioc.append(novo)
+        st.session_state.historico.append(novo)
         if len(st.session_state.historico) > 50:
             st.session_state.historico.pop(0)
         st.session_state.alertas = verificar_alertas(novo, st.session_state.alertas)
@@ -110,7 +110,7 @@ with st.sidebar:
 c1, c2 = st.columns([3, 1])
 
 with c1:
-    st.markdown("#\U00002604 AETHER-1 Space Monitor")
+    st.markdown("# \U00002604 AETHER-1 Space Monitor")
     st.caption("Sistema de monitormaneto - Missão espacial experimental")
 
 with c2:
