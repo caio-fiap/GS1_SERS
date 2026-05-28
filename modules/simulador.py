@@ -1,5 +1,4 @@
 import random
-import math
 from datetime import datetime
 
 #limites operacionais
