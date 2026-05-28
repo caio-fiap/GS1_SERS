@@ -141,3 +141,42 @@ with m4:
     st.metric("\U0001F4E1 Sinal", f"{e['sinal']}%", f"{delta_sinal:+.1f}%", delta_color = delta_color(e['status_sinal']))
 
 st.markdown("---")
+
+#gauges e modulos
+col_gauges, col_modulos = st.columns([2, 1])
+
+with col_gauges:
+    st.markdown("#### \U0001F4CA Leituras em tempo real")
+    g1, g2, g3, g4 = st.columns(4)
+    with g1:
+        st.plotly_chart(gauge(e["bateria"], 0, 100, "Bateria (%)", e["status_bateria"]), use_container_width = True, key = "g_bat")
+    with g2:
+        st.plotly_chart(gauge(e["solar_kw"], 0, 5.5, "Solar (kW)", e["status_solar"]), use_container_width=True, key="g_solar")
+    with g3:
+        st.plotly_chart(gauge(e["temperatura"], -20, 70, "Temperatura (ºC)", e["status_temp"]), use_container_width=True, key="g_temp")
+    with g4:
+        st.plotly_chart(gauge(e["sinal"], 0, 100, "Sinal (%)", e["status_sinal"]), use_container_width=True, key="g_sinal")
+
+with col_modulos:
+    st.markdown("#### \U0001F9E9 Status dos módulos")
+
+    modulos = [
+        ("A - Energia", e["status_bateria"], f"Geração: {e['solar_kw']}kW\nCosnumo: {e['consumo_kw']} kW"),
+        ("B - Térmico", e["status_temp"], f"Temp: {e['tempertatura']}ºC\nDissipação: {e['dissipacao_kw']} kW"),
+        ("C - Comunicação", e["status_sinal"], f"Sinal: {e['sinal']}%\nLatência: {e['latencia_ms']} ms"),
+    ]
+    for nome, status, detalhe in modulos:
+        cor = COR_STATUS[status]
+        emoji = EMOJI_STATUS[status]
+        st.markdown(f"""
+            <div class="module-box">
+                <b>{emoji} Módulo {nome}</b><br>
+                <small style="color: {cor}; font-weight:600">
+                    {LABEL_STATUS[status]}</small><br>
+                <small style="color: #666>
+                    {detalhe.replace(chr(10), '<br>')}
+                </small>
+            </div>
+        """, unsafe_allow_html = True)
+
+st.markdown("---")
