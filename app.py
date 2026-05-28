@@ -5,7 +5,6 @@ Sistema de monitoramento para missão espacial experimental
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.express as px
 from modules.simulador import gerar_ciclo, ESTADO_INICIAL
 from modules.alertas import verificar_alertas, gerar_log_entry
 
@@ -180,3 +179,79 @@ with col_modulos:
         """, unsafe_allow_html = True)
 
 st.markdown("---")
+
+#grafico historico
+st.markdown("####\U0001F4C8 Histórico da Missão")
+
+if len(hist) > 1:
+    df = pd.DataFrame(hist[-intervalo:])
+    df["ciclo_idx"] = range(len(df))
+
+    ch1, ch2 = st.columns(2)
+
+    with ch1:
+        fig_energia = go.Figure()
+        fig_energia.add_trace(go.Scatter(x = df["ciclo_idx"], y = df["bateria"], name = "Bateria (%)", line = dict(color = "#007bff", width = 2), fill = "tozeroy", fillcolor = "rgba(0, 123, 255, 0.1)"))
+        fig_energia.add_trace(go.Scatter(x = df["ciclo_idx"], y = df["solar_kw"] * 20, name = "Solar x20(%)", line = dict(color = "#28a745", width = 2, dash = "dot")))
+        fig_energia.add_hline(y = 30, line_dash = "dash", line_color = "#ffc107", annotation_text="\U0001F7E1 Alerta bateria")
+        fig_energia.add_hline(y = 15, line_dash = "dash", line_color = "#dc3545", annotation_text="\U0001F534 Crítico")
+        fig_energia.update_layout(title = "Energia - Bateria & Solar", height = 260, margin = dict(l = 0, r = 0, t = 35, b = 0), legend = dict(orientation = "h", y = -0.25), xaxis_title = "Ciclo", yaxis_title = "Valor")
+        st.plotly_chart(fig_energia, use_container_width = True)
+
+    with ch2:
+        fig_temp = go.Figure()
+        fig_temp.add_trace(go.Scatter(x = df["ciclo_idx"], y = df["temperatura"], name = "Temperatura (ºC)", line = dict(color = "#fd7e14", width = 2)))
+        fig_temp.add_trace(go.Scatter(x = df["ciclo_idx"], y = df["sinal"], name = "Sinal (%)", line = dict(color = "#6f42c1", width = 2)))
+        fig_energia.add_hline(y=45, line_dash="dash", line_color="#ffc107", annotation_text="\U0001F7E1 Alerta temp")
+        fig_energia.add_hline(y=55, line_dash="dash", line_color="#dc3545", annotation_text="\U0001F534 Crítico")
+        fig_temp.update_layout(title = "Temperatura & Sinal de Comunicação", height = 260, margin = dict(l = 0, r = 0, t = 35, b = 0), legend = dict(orientation = "h", y = -0.25), xaxis_title = "Ciclo", yaxis_title = "Valor")
+        st.plotly_chart(fig_temp, use_container_width = True)
+
+else:
+    st.info("Clique em **Próximo Ciclo** para gerar dados históricos.")
+
+st.markdown("---")
+
+#alerta
+col_alertas, col_log = st.colums([1, 1])
+
+with col_alertas:
+    st.markdown("#### \U0001F514 Alertas Ativos")
+    alertas_exibir = list(reversed(st.session_state.alertas[-10:]))
+
+    if alertas_exibir:
+        for alerta in alertas_exibir:
+            nivel = alerta["nivel"]
+            st.markdown(f"""
+                <div class="alert-{nivel}">
+                    <b>[{alerta['timestamp']}]</b> {alerta['mensagem']} <br>
+                    <i>{alerta['respotsta']}</i>
+                </div>
+            """, unsafe_allow_html=True)
+    else:
+        st.markdown('<div class="alert-ok">\U0001F7E2 Nenhum alerta - todos os sistemas normais</div>', unsafe_allow_html=True)
+
+with col_log:
+    st.markdown("#### \U0001F4CB Log Operacional")
+    if st.session_state.logs:
+        logs_df = pd.DataFrame(st.session_state.logs)
+        logs_exibir = logs_df[["ciclo", "timestamp", "nivel", "bateria", "solar", "temp", "sinal"]].copy()
+        logs_exibir.columns = ["Ciclo", "Hora", "Status", "Bat %", "Solar kW", "Temp ºC", "Sinal %"]
+        logs_exibir = logs_exibir.iloc[::-1].head(15 if mostrar_log else 8)
+
+        def colorir_status(val):
+            cores = {"NORMAL": "background-color: #d4edda", "ALERTA": "background-color: #fff3cd", "CRÍTICO": "background-color: #f8d7da"}
+            return cores.get(val, "")
+
+        st.dataframe(
+            logs_exibir.style.applymap(colorir_status, subset=["Status"]),
+            use_container_width = True,
+            hide_index = True,
+            height = 280,
+        )
+    else:
+        st.info("Log vazio - execute ciclos para registrar dados.")
+
+#footer
+st.markdown("---")
+st.caption("\U00002604 AETHER-1 Space Monitor | Missão Espacial Experimental | Soluções em Energias Renováveis e Sustentabilidade")
