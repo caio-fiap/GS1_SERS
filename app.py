@@ -66,7 +66,7 @@ with st.sidebar:
     st.markdown("---")
 
     status_atual = st.session_state.estado["status_geral"]
-    st.markdown(f"**Status: **{badge(status_atual)}", unsafe_allow_html=True)
+    st.markdown(f"**Status:** {badge(status_atual)}", unsafe_allow_html=True)
     st.markdown(f"**Ciclo:** {st.session_state.ciclo}")
     st.markdown(f"**Alertas:** {len(st.session_state.alertas)}")
     st.markdown("---")
