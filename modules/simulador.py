@@ -38,7 +38,7 @@ def classificar(chave: str, valor: float) -> str:
         if valor <= lim["alerta"][1]:
             return "alerta"
         return "ok"
-    return "k"
+    return "ok"
 
 def gerar_ciclo(estado_anterior: dict, modo_crise: bool = False) -> dict:
     """gera um conjunto de dados simulados com base no estado anterior. modo_crise: valores degradam mais rapido"""
@@ -53,7 +53,7 @@ def gerar_ciclo(estado_anterior: dict, modo_crise: bool = False) -> dict:
         carga = 1.5 if estado_anterior["solar_kw"] > 2.0 else -1.5
         nova_bateria = max(2, min(100, estado_anterior["bateria"] + carga + ruido(6)))
         novo_solar = max(0.2, min(5.5, estado_anterior["solar_kw"] - 0.4 + ruido(0.2)))
-        nova_temp = max(75, min(60, estado_anterior["temperatura"] - 5 + ruido(3)))
+        nova_temp = max(-20, min(60, estado_anterior["temperatura"] - 5 + ruido(3)))
         novo_sinal = max(3, min(100, estado_anterior["sinal"] - 10 + ruido(5)))
 
     consumo = round(novo_solar + 0.6, 2)

@@ -56,7 +56,7 @@ def delta_color(status: str) -> str:
 #gauge -> medidor/grafico
 def gauge(valor: float, minv: float, maxv: float, titulo: str, status: str) -> go.Figure:
     cor = COR_STATUS[status]
-    fig = go.Figure(go.Indicator(mode="gauge+number", value="valor", title={"text": titulo, "font": {"size": 13}}, gauge={"axis": {"range": [minv, maxv], "tickfont": {"size": 10}}, "bar": {"color": cor, "thickness": 0.25}, "bgcolor": "#f8f9fa", "steps": [{"range": [minv, maxv], "color": "#e9ecef"}], "threshold": {"line": {"color": cor, "width": 3}, "value": valor}, }, number = {"font": {"size": 22, "color": cor}}, ))
+    fig = go.Figure(go.Indicator(mode="gauge+number", value=valor, title={"text": titulo, "font": {"size": 13}}, gauge={"axis": {"range": [minv, maxv], "tickfont": {"size": 10}}, "bar": {"color": cor, "thickness": 0.25}, "bgcolor": "#f8f9fa", "steps": [{"range": [minv, maxv], "color": "#e9ecef"}], "threshold": {"line": {"color": cor, "width": 3}, "value": valor}, }, number = {"font": {"size": 22, "color": cor}}, ))
     fig.update_layout(height=160, margin=dict(l=15, r=15, t=30, b=5))
     return fig
 
@@ -66,7 +66,7 @@ with st.sidebar:
     st.markdown("---")
 
     status_atual = st.session_state.estado["status_geral"]
-    st.markdown(f"**Status:**{badge(status_atual)}", unsafe_allow_html=True)
+    st.markdown(f"**Status: **{badge(status_atual)}", unsafe_allow_html=True)
     st.markdown(f"**Ciclo:** {st.session_state.ciclo}")
     st.markdown(f"**Alertas:** {len(st.session_state.alertas)}")
     st.markdown("---")
@@ -130,7 +130,7 @@ with m1:
     delta_bat = round(e["bateria"] - hist[-2]["bateria"], 1) if len(hist) > 1 else 0
     st.metric("\U0001F50B Bateria" f"{e['bateria']}%", f"{delta_bat:+.1f}%", delta_color = delta_color(e["status_bateria"]))
 with m2:
-    delta_solar = round(e["solar_kw"] - hist[-2]["solar-kw"], 2) if len(hist) > 1 else 0
+    delta_solar = round(e["solar_kw"] - hist[-2]["solar_kw"], 2) if len(hist) > 1 else 0
     st.metric("\U00002600 Painel Solar", f"{e['solar_kw']} kW", f"{delta_solar:+.2f} kW", delta_color = delta_color(e["status_solar"]))
 with m3:
     delta_temp = round(e["temperatura"] - hist[-2]["temperatura"], 1) if len(hist) > 1 else 0
@@ -161,7 +161,7 @@ with col_modulos:
 
     modulos = [
         ("A - Energia", e["status_bateria"], f"Geração: {e['solar_kw']}kW\nCosnumo: {e['consumo_kw']} kW"),
-        ("B - Térmico", e["status_temp"], f"Temp: {e['tempertatura']}ºC\nDissipação: {e['dissipacao_kw']} kW"),
+        ("B - Térmico", e["status_temp"], f"Temp: {e['temperatura']}ºC\nDissipação: {e['dissipacao_kw']} kW"),
         ("C - Comunicação", e["status_sinal"], f"Sinal: {e['sinal']}%\nLatência: {e['latencia_ms']} ms"),
     ]
     for nome, status, detalhe in modulos:
@@ -172,7 +172,7 @@ with col_modulos:
                 <b>{emoji} Módulo {nome}</b><br>
                 <small style="color: {cor}; font-weight:600">
                     {LABEL_STATUS[status]}</small><br>
-                <small style="color: #666>
+                <small style="color: #666">
                     {detalhe.replace(chr(10), '<br>')}
                 </small>
             </div>
@@ -202,8 +202,8 @@ if len(hist) > 1:
         fig_temp = go.Figure()
         fig_temp.add_trace(go.Scatter(x = df["ciclo_idx"], y = df["temperatura"], name = "Temperatura (ºC)", line = dict(color = "#fd7e14", width = 2)))
         fig_temp.add_trace(go.Scatter(x = df["ciclo_idx"], y = df["sinal"], name = "Sinal (%)", line = dict(color = "#6f42c1", width = 2)))
-        fig_energia.add_hline(y=45, line_dash="dash", line_color="#ffc107", annotation_text="\U0001F7E1 Alerta temp")
-        fig_energia.add_hline(y=55, line_dash="dash", line_color="#dc3545", annotation_text="\U0001F534 Crítico")
+        fig_temp.add_hline(y=45, line_dash="dash", line_color="#ffc107", annotation_text="\U0001F7E1 Alerta temp")
+        fig_temp.add_hline(y=55, line_dash="dash", line_color="#dc3545", annotation_text="\U0001F534 Crítico")
         fig_temp.update_layout(title = "Temperatura & Sinal de Comunicação", height = 260, margin = dict(l = 0, r = 0, t = 35, b = 0), legend = dict(orientation = "h", y = -0.25), xaxis_title = "Ciclo", yaxis_title = "Valor")
         st.plotly_chart(fig_temp, use_container_width = True)
 
@@ -213,7 +213,7 @@ else:
 st.markdown("---")
 
 #alerta
-col_alertas, col_log = st.colums([1, 1])
+col_alertas, col_log = st.columns([1, 1])
 
 with col_alertas:
     st.markdown("#### \U0001F514 Alertas Ativos")
@@ -225,7 +225,7 @@ with col_alertas:
             st.markdown(f"""
                 <div class="alert-{nivel}">
                     <b>[{alerta['timestamp']}]</b> {alerta['mensagem']} <br>
-                    <i>{alerta['respotsta']}</i>
+                    <i>{alerta['resposta']}</i>
                 </div>
             """, unsafe_allow_html=True)
     else:
