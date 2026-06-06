@@ -12,7 +12,7 @@ from modules.alertas import verificar_alertas, gerar_log_entry
 #configuracao da pagina
 st.set_page_config(
     page_title="AETHER-1 \u2501 Space Monitor",
-    page_icon= "\U00002604",
+    page_icon= "️☄️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -63,7 +63,7 @@ def gauge(valor: float, minv: float, maxv: float, titulo: str, status: str) -> g
 
 #sidebar
 with st.sidebar:
-    st.markdown("## \U00002604 AETHER-1 Control")
+    st.markdown("## ☄️ AETHER-1 Control")
     st.markdown("---")
 
     status_atual = st.session_state.estado["status_geral"]
@@ -111,7 +111,7 @@ with st.sidebar:
 c1, c2 = st.columns([3, 1])
 
 with c1:
-    st.markdown("# \U00002604 AETHER-1 Space Monitor")
+    st.markdown("# ☄️ AETHER-1 Space Monitor")
     st.caption("Sistema de monitormaneto - Missão espacial experimental")
 
 with c2:
@@ -255,4 +255,4 @@ with col_log:
 
 #footer
 st.markdown("---")
-st.caption("\U00002604 AETHER-1 Space Monitor | Missão Espacial Experimental | Soluções em Energias Renováveis e Sustentabilidade")
+st.caption("☄️ AETHER-1 Space Monitor | Missão Espacial Experimental | Soluções em Energias Renováveis e Sustentabilidade")
