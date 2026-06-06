@@ -1,4 +1,4 @@
-# ☄️ AETHER-1 -Space Energy Monitor
+# ☄️ AETHER-1 - Space Energy Monitor
 
 Sistema inteligente de monitoramento para missão espacial experimental. 
 Desenvolvido para a Global Solution de **Soluções em Energias Renováveis e Sustentabilidade**
