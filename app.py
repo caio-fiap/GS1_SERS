@@ -5,6 +5,7 @@ Sistema de monitoramento para missão espacial experimental
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
+from typing import Literal
 from modules.simulador import gerar_ciclo, ESTADO_INICIAL
 from modules.alertas import verificar_alertas, gerar_log_entry
 
@@ -50,7 +51,7 @@ EMOJI_STATUS = {"ok": "\U0001F7E2", "alerta": "\U0001F7E1", "critico": "\U0001F5
 def badge(nivel: str) -> str:
     return f'<span class="badge-{nivel}">{EMOJI_STATUS[nivel]}{LABEL_STATUS[nivel]}</span>'
 
-def delta_color(status: str) -> str:
+def delta_color(status: str) -> Literal["normal", "inverse"]:
     return "normal" if status == "ok" else "inverse"
 
 #gauge -> medidor/grafico
@@ -128,7 +129,7 @@ hist = st.session_state.historico
 m1, m2, m3, m4 = st.columns(4)
 with m1:
     delta_bat = round(e["bateria"] - hist[-2]["bateria"], 1) if len(hist) > 1 else 0
-    st.metric("\U0001F50B Bateria" f"{e['bateria']}%", f"{delta_bat:+.1f}%", delta_color = delta_color(e["status_bateria"]))
+    st.metric("\U0001F50B Bateria", f"{e['bateria']}%", f"{delta_bat:+.1f}%", delta_color = delta_color(e["status_bateria"]))
 with m2:
     delta_solar = round(e["solar_kw"] - hist[-2]["solar_kw"], 2) if len(hist) > 1 else 0
     st.metric("\U00002600 Painel Solar", f"{e['solar_kw']} kW", f"{delta_solar:+.2f} kW", delta_color = delta_color(e["status_solar"]))
