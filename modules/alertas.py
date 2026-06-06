@@ -9,20 +9,20 @@ RESET = '\x1B[0m'
 # mensagens de alerta por sensor e nivel
 MENSAGENS = {
     "bateria": {
-        "alerta": f"{AMARELO}\u25CF{RESET} Bateria em {{val}}% - consumo não essencial reduzido",
-        "critico": f"{VERMELHO}\u25CF{RESET} Bateria CRÍTICA ({{val}}%) - protocolo de emergência ativado",
+        "alerta": f"🟡 Bateria em ({{val}}%) - consumo não essencial reduzido",
+        "critico": f"🔴 Bateria CRÍTICA ({{val}}%) - protocolo de emergência ativado",
     },
     "solar_kw": {
-        "alerta": f"{AMARELO}\u25CF{RESET} Geração solar baixa ({{val}}kW) - verificar orientação dos painéis",
-        "critico": f"{VERMELHO}\u25CF{RESET} Falha nos painéis solares ({{val}}kW) - trocando para reserva",
+        "alerta": f"🟡 Geração solar baixa ({{val}}kW) - verificar orientação dos painéis",
+        "critico": f"🔴 Falha nos painéis solares ({{val}}kW) - trocando para reserva",
     },
     "temperatura": {
-        "alerta": f"{AMARELO}\u25CF{RESET} Temperatura elevada ({{val}}ºC) - sistema de resfriamento aumentado",
-        "critico": f"{VERMELHO}\u25CF{RESET} Falha nos painéis solares ({{val}}kW) - resfriamento de emergência ativado",
+        "alerta": f"🟡 Temperatura elevada ({{val}}ºC) - sistema de termostato aumentado",
+        "critico": f"🔴 Falha nos painéis solares ({{val}}kW) - termostato de emergência ativado",
     },
     "sinal": {
-        "alerta": f"{AMARELO}\u25CF{RESET} Sinal fraco ({{val}}%) - ajustando antena direcional",
-        "critico": f"{VERMELHO}\u25CF{RESET} Perda de sinal ({{val}}%) - tentando reconexão automática",
+        "alerta": f"🟡 Sinal fraco ({{val}}%) - ajustando antena direcional",
+        "critico": f"🔴 Perda de sinal ({{val}}%) - tentando reconexão automática",
     },
 }
 
@@ -37,7 +37,7 @@ RESPOSTAS = {
         "critico": "-> Ação: Bateria de reserva ativada. Diagnóstico de painel iniciado",
     },
     "temperatura": {
-        "alerta":  "-> Ação: Sistema de resfriamento aumentado em 50%.",
+        "alerta": "-> Ação: Sistema de termostato aumentado em 50%.",
         "critico": "-> Ação: Dissipador auxiliar acionado. Carga de processamento reduzida",
     },
     "sinal": {
@@ -66,7 +66,7 @@ def verificar_alertas(estado: dict, alertas_existentes: list) -> list:
         if nivel == "ok":
             continue
 
-        msg_alerta = MENSAGENS[chave_msg][nivel].replace("{{val}}", str(round(valor, 1)))
+        msg_alerta = MENSAGENS[chave_msg][nivel].format(val=round(valor, 1))
         msg_resposta = RESPOSTAS[chave_msg][nivel]
 
         ultimo_igual = any(

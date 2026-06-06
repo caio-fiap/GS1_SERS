@@ -182,7 +182,7 @@ with col_modulos:
 st.markdown("---")
 
 #grafico historico
-st.markdown("####\U0001F4C8 Histórico da Missão")
+st.markdown("#### \U0001F4C8 Histórico da Missão")
 
 if len(hist) > 1:
     df = pd.DataFrame(hist[-intervalo:])
@@ -241,11 +241,11 @@ with col_log:
         logs_exibir = logs_exibir.iloc[::-1].head(15 if mostrar_log else 8)
 
         def colorir_status(val):
-            cores = {"NORMAL": "background-color: #d4edda", "ALERTA": "background-color: #fff3cd", "CRÍTICO": "background-color: #f8d7da"}
+            cores = {"NORMAL": "background-color: #d4edda", "ALERTA": "background-color: #fff3cd", "CRÍTICO": "background-color: #5c1e16"}
             return cores.get(val, "")
 
         st.dataframe(
-            logs_exibir.style.applymap(colorir_status, subset=["Status"]),
+            logs_exibir.style.map(colorir_status, subset=["Status"]),
             use_container_width = True,
             hide_index = True,
             height = 280,
